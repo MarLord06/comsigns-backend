@@ -1,13 +1,13 @@
 [phases.setup]
-nixPkgs = ["python311Full", "ffmpeg"]
+nixPkgs = ["python311Full", "python311Packages.pip", "python311Packages.virtualenv", "ffmpeg"]
 
 [phases.install]
 dependsOn = ["setup"]
 cmds = [
-    "python3 -m ensurepip --upgrade",
-    "python3 -m pip install --upgrade pip",
-    "cd comsigns-backend && python3 -m pip install -r requirements.txt"
+    "python3 -m venv /app/venv",
+    "/app/venv/bin/pip install --upgrade pip",
+    "cd comsigns-backend && /app/venv/bin/pip install -r requirements.txt"
 ]
 
 [start]
-cmd = "cd comsigns-backend && python3 -m uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT}"
+cmd = "cd comsigns-backend && /app/venv/bin/uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT}"
