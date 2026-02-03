@@ -46,8 +46,8 @@ class InferenceService:
     
     Example:
         >>> service = InferenceService(
-        ...     checkpoint_path="experiments/run/checkpoints/best.pt",
-        ...     class_mapping_path="experiments/run/class_mapping.json",
+        ...     checkpoint_path="models/run/checkpoints/best.pt",
+        ...     class_mapping_path="models/run/class_mapping.json",
         ...     dict_path="data/raw/lsp_aec/dict.json"
         ... )
         >>> 

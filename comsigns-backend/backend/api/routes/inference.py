@@ -102,11 +102,11 @@ def get_batch_service():
         
         CHECKPOINT_PATH = Path(os.getenv(
             "COMSIGNS_CHECKPOINT",
-            BASE_DIR / f"experiments/{DEFAULT_EXPERIMENT}/checkpoints/best.pt"
+            BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/checkpoints/best.pt"
         ))
         CLASS_MAPPING_PATH = Path(os.getenv(
             "COMSIGNS_CLASS_MAPPING",
-            BASE_DIR / f"experiments/{DEFAULT_EXPERIMENT}/class_mapping.json"
+            BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/class_mapping.json"
         ))
         DICT_PATH = Path(os.getenv(
             "COMSIGNS_DICT",

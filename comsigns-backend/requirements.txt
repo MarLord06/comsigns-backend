@@ -1,0 +1,26 @@
+# Core dependencies
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+pyyaml>=6.0
+
+# Video processing
+opencv-python-headless>=4.8.0
+ffmpeg-python>=0.2.0
+
+# MediaPipe
+mediapipe>=0.10.0
+
+# Deep Learning
+torch>=2.0.0
+torchvision>=0.15.0
+
+# API
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+python-multipart>=0.0.6
+
+# Data processing
+numpy>=1.24.0
+
+# Utilities
+python-dotenv>=1.0.0
