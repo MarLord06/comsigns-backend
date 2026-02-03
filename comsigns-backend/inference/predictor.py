@@ -198,9 +198,14 @@ class Predictor:
         topk_preds = []
         for rank, (prob, idx) in enumerate(zip(topk_probs, topk_indices), start=1):
             class_id = idx.item()
+            # Defensive access for class_name
+            try:
+                class_name = self.class_names[class_id]
+            except (KeyError, IndexError):
+                class_name = f"class_{class_id}"
             topk_preds.append(TopKPrediction(
                 class_id=class_id,
-                class_name=self.class_names[class_id],
+                class_name=class_name,
                 score=prob.item(),
                 rank=rank
             ))
@@ -262,9 +267,14 @@ class Predictor:
             topk_preds = []
             for rank, (prob, idx) in enumerate(zip(topk_probs, topk_indices), start=1):
                 class_id = idx.item()
+                # Defensive access for class_name
+                try:
+                    class_name = self.class_names[class_id]
+                except (KeyError, IndexError):
+                    class_name = f"class_{class_id}"
                 topk_preds.append(TopKPrediction(
                     class_id=class_id,
-                    class_name=self.class_names[class_id],
+                    class_name=class_name,
                     score=prob.item(),
                     rank=rank
                 ))
