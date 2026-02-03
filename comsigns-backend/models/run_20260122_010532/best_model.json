@@ -1,0 +1,16 @@
+{
+  "best_epoch": 74,
+  "selection_criteria": [
+    "learned_words_count",
+    "f1_macro",
+    "val_loss"
+  ],
+  "metrics": {
+    "learned_words_count": 17,
+    "f1_macro": 0.17637012244264053,
+    "val_loss": 3.325121767593153,
+    "accuracy": 0.32821497321128845,
+    "accuracy_top5": 0.6410748362541199
+  },
+  "selected_at": "2026-01-22T01:21:18.049027"
+}

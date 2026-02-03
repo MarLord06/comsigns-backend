@@ -1,0 +1,11 @@
+{
+  "experiment_id": "tail_to_other_20260122_012654",
+  "num_classes": 142,
+  "num_samples": 521,
+  "timestamp": "2026-01-22T01:26:56.714865",
+  "pct_predictions_most_frequent": 0.29558541266794625,
+  "most_frequent_class_id": 141,
+  "pct_predictions_other": 0.29558541266794625,
+  "prediction_entropy": 0.7173828140415797,
+  "num_unique_predictions": 92
+}

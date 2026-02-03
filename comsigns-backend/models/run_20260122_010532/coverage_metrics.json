@@ -1,0 +1,21 @@
+{
+  "experiment_id": "tail_to_other_20260122_012654",
+  "num_classes": 142,
+  "num_samples": 521,
+  "timestamp": "2026-01-22T01:26:56.714865",
+  "coverage_at_1": 0.39436619718309857,
+  "coverage_at_5": 0.6690140845070423,
+  "coverage_at_1_by_bucket": {
+    "HEAD": 0.7777777777777778,
+    "MID": 0.20833333333333334,
+    "OTHER": 1.0
+  },
+  "coverage_at_5_by_bucket": {
+    "HEAD": 0.9555555555555556,
+    "MID": 0.53125,
+    "OTHER": 1.0
+  },
+  "num_classes_predicted_at_1": 56,
+  "num_classes_predicted_at_5": 95,
+  "total_classes": 142
+}

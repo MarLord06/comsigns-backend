@@ -1,0 +1,76 @@
+{
+  "criteria": {
+    "min_support": 2,
+    "min_precision": 0.5,
+    "min_recall": 0.5,
+    "min_f1": 0.5
+  },
+  "total_classes": 142,
+  "eligible_classes": 97,
+  "learned_words_count": 15,
+  "pct_vocabulary_learned": 0.15463917525773196,
+  "by_bucket": {
+    "HEAD": {
+      "bucket_name": "HEAD",
+      "total_classes": 45,
+      "eligible_classes": 45,
+      "learned_words": 5,
+      "pct_learned": 0.1111111111111111,
+      "learned_class_ids": [
+        6,
+        7,
+        27,
+        31,
+        36
+      ]
+    },
+    "MID": {
+      "bucket_name": "MID",
+      "total_classes": 96,
+      "eligible_classes": 51,
+      "learned_words": 10,
+      "pct_learned": 0.19607843137254902,
+      "learned_class_ids": [
+        53,
+        59,
+        72,
+        83,
+        86,
+        92,
+        93,
+        115,
+        118,
+        129
+      ]
+    },
+    "OTHER": {
+      "bucket_name": "OTHER",
+      "total_classes": 1,
+      "eligible_classes": 1,
+      "learned_words": 0,
+      "pct_learned": 0.0,
+      "learned_class_ids": []
+    }
+  },
+  "learned_class_ids": [
+    6,
+    7,
+    27,
+    31,
+    36,
+    53,
+    59,
+    72,
+    83,
+    86,
+    92,
+    93,
+    115,
+    118,
+    129
+  ],
+  "not_learned_reasons": {
+    "low_precision": 76,
+    "low_recall": 6
+  }
+}

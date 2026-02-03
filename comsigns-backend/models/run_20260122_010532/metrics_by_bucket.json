@@ -1,0 +1,35 @@
+{
+  "experiment_id": "tail_to_other_20260122_012654",
+  "num_classes": 142,
+  "num_samples": 521,
+  "timestamp": "2026-01-22T01:26:56.714865",
+  "buckets": {
+    "HEAD": {
+      "bucket_name": "HEAD",
+      "accuracy_at_1": 0.32113821138211385,
+      "accuracy_at_5": 0.6341463414634146,
+      "macro_f1": 0.34398231398231405,
+      "num_classes_in_bucket": 45,
+      "num_classes_predicted": 35,
+      "num_samples": 246
+    },
+    "MID": {
+      "bucket_name": "MID",
+      "accuracy_at_1": 0.1513157894736842,
+      "accuracy_at_5": 0.45394736842105265,
+      "macro_f1": 0.14722222222222223,
+      "num_classes_in_bucket": 96,
+      "num_classes_predicted": 20,
+      "num_samples": 152
+    },
+    "OTHER": {
+      "bucket_name": "OTHER",
+      "accuracy_at_1": 0.4796747967479675,
+      "accuracy_at_5": 0.7967479674796748,
+      "macro_f1": 0.6483516483516484,
+      "num_classes_in_bucket": 1,
+      "num_classes_predicted": 1,
+      "num_samples": 123
+    }
+  }
+}
