@@ -98,8 +98,8 @@ class InferenceService:
         logger.info("Loading inference model...")
         
         # Import here to avoid circular imports
-        from inference.loader import InferenceLoader
-        from inference.predictor import Predictor
+        from backend.inference.loader import InferenceLoader
+        from backend.inference.predictor import Predictor
         from backend.semantic import SemanticMappingLoader, SemanticResolver
         
         # Load model
