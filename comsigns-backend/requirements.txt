@@ -10,7 +10,8 @@ ffmpeg-python>=0.2.0
 # MediaPipe
 mediapipe>=0.10.0
 
-# Deep Learning
+# Deep Learning - CPU only (smaller, faster build)
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.0.0
 torchvision>=0.15.0
 
