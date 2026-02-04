@@ -32,5 +32,5 @@ ENV PYTHONPATH=/app/comsigns-backend
 # Expose port
 EXPOSE 8080
 
-# Start command (no --reload in production)
-CMD uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT:-8080}
+# Start command
+CMD ["sh", "-c", "uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT:-8080}"]
