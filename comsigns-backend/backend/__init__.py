@@ -13,6 +13,9 @@ from .semantic import (
     SemanticResolver,
     create_semantic_resolver
 )
+from .api import (
+    app
+)
 
 
 __all__ = [

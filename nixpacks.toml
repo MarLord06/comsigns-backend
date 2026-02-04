@@ -1,5 +1,6 @@
 [phases.setup]
-nixPkgs = ["python311Full", "python311Packages.pip", "python311Packages.virtualenv", "ffmpeg"]
+nixPkgs = ["python311Full", "python311Packages.pip", "python311Packages.virtualenv", "ffmpeg", "gcc", "zlib"]
+aptPkgs = ["libstdc++6"]
 
 [phases.install]
 dependsOn = ["setup"]
