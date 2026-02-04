@@ -7,3 +7,7 @@ healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
+
+[deploy.env]
+COMSIGNS_DEVICE = "cpu"
+PYTHONUNBUFFERED = "1"
