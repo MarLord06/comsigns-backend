@@ -1,14 +1,17 @@
 [phases.setup]
-nixPkgs = ["python311Full", "python311Packages.pip", "python311Packages.virtualenv", "ffmpeg", "gcc", "zlib"]
-aptPkgs = ["libstdc++6"]
+nixPkgs = ["python311Full", "python311Packages.pip", "python311Packages.virtualenv", "ffmpeg", "gcc", "glibc", "libz"]
 
 [phases.install]
 dependsOn = ["setup"]
 cmds = [
     "python3 -m venv /app/venv",
     "/app/venv/bin/pip install --upgrade pip",
-    "cd comsigns-backend && /app/venv/bin/pip install --no-cache-dir -r requirements.txt"
+    "cd comsigns-backend && /app/venv/bin/pip install --no-cache-dir -r requirements.txt",
+    "find /nix -name 'libstdc++.so.6' 2>/dev/null | head -1 > /app/.libstdcpp_path || true"
 ]
 
+[variables]
+LD_LIBRARY_PATH = "/nix/var/nix/profiles/default/lib:/usr/lib/x86_64-linux-gnu:/lib/x86_64-linux-gnu"
+
 [start]
-cmd = "cd comsigns-backend && /app/venv/bin/uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT}"
+cmd = "export LD_LIBRARY_PATH=$(dirname $(find /nix -name 'libstdc++.so.6' 2>/dev/null | head -1)):$LD_LIBRARY_PATH && cd comsigns-backend && /app/venv/bin/uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT}"
