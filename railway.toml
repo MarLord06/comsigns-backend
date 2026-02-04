@@ -1,8 +1,8 @@
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "export LD_LIBRARY_PATH=$(dirname $(find /nix -name 'libstdc++.so.6' 2>/dev/null | head -1)):$LD_LIBRARY_PATH && cd comsigns-backend && /app/venv/bin/uvicorn backend.api.app:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
