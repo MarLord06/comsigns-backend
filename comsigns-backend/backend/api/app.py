@@ -62,7 +62,7 @@ CLASS_MAPPING_PATH = Path(os.getenv(
 ))
 DICT_PATH = Path(os.getenv(
     "COMSIGNS_DICT",
-    BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/dict.json"
+    BASE_DIR / f"models/dict.json"
 ))
 DEVICE = os.getenv("COMSIGNS_DEVICE", "cpu")
 
