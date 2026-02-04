@@ -12,24 +12,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /app
+WORKDIR /app/comsigns-backend
 
 # Copy requirements first for better caching
-COPY comsigns-backend/requirements.txt /app/comsigns-backend/
+COPY comsigns-backend/requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /app/comsigns-backend/requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
-COPY comsigns-backend/ /app/comsigns-backend/
+COPY comsigns-backend/ ./
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV COMSIGNS_DEVICE=cpu
+ENV PYTHONPATH=/app/comsigns-backend
 
 # Expose port
 EXPOSE 8080
 
-# Start command
-CMD ["sh", "-c", "cd /app/comsigns-backend && uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT:-8080}"]
+# Start command (no --reload in production)
+CMD uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT:-8080}
