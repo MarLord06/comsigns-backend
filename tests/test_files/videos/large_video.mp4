@@ -1,0 +1,10 @@
+# Archivo que simula video excesivamente grande
+# NOTA: Este es solo un marcador de posición.
+# En un entorno real, este debería ser un archivo de video
+# que exceda el límite de 100MB.
+#
+# El sistema rechaza archivos > 100MB antes de procesarlos
+# para evitar consumo excesivo de recursos.
+#
+# Este archivo se usa en TEST-008 para verificar
+# validación de límites de tamaño de archivo.

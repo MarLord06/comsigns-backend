@@ -1,0 +1,10 @@
+# Archivo con extensión inválida para pruebas
+# NOTA: Este es solo un marcador de posición.
+# En un entorno real, este podría ser cualquier archivo
+# con extensión no soportada (.gif, .jpg, .png, etc.)
+#
+# Las extensiones permitidas para video son:
+# .mp4, .mov, .avi, .webm, .mkv
+#
+# Este archivo se usa en TEST-007 para verificar
+# validación de extensiones de video.

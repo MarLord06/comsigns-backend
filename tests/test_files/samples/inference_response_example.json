@@ -1,0 +1,53 @@
+{
+  "top1": {
+    "gloss": "HOLA",
+    "confidence": 0.87,
+    "bucket": "HEAD",
+    "is_other": false,
+    "new_class_id": 259,
+    "old_class_id": 259
+  },
+  "topk": [
+    {
+      "rank": 1,
+      "gloss": "HOLA",
+      "confidence": 0.87,
+      "bucket": "HEAD",
+      "is_other": false
+    },
+    {
+      "rank": 2,
+      "gloss": "GRACIAS",
+      "confidence": 0.12,
+      "bucket": "HEAD",
+      "is_other": false
+    },
+    {
+      "rank": 3,
+      "gloss": "ADIOS",
+      "confidence": 0.08,
+      "bucket": "HEAD",
+      "is_other": false
+    },
+    {
+      "rank": 4,
+      "gloss": "POR_FAVOR",
+      "confidence": 0.06,
+      "bucket": "MID",
+      "is_other": false
+    },
+    {
+      "rank": 5,
+      "gloss": "OTHER_999",
+      "confidence": 0.02,
+      "bucket": "OTHER",
+      "is_other": true
+    }
+  ],
+  "meta": {
+    "model": "micro_v1",
+    "num_classes": 1200,
+    "device": "cpu",
+    "topk_requested": 5
+  }
+}

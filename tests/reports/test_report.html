@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ComSigns API Test Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .summary { background: #f0f0f0; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .test { margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .passed { background: #d4edda; border-color: #c3e6cb; }
+        .failed { background: #f8d7da; border-color: #f5c6cb; }
+        .error { color: red; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>ComSigns API Test Report</h1>
+    <div class="summary">
+        <h2>Summary</h2>
+        <p><strong>Total Tests:</strong> 8</p>
+        <p><strong>Passed:</strong> 7</p>
+        <p><strong>Failed:</strong> 1</p>
+        <p><strong>Success Rate:</strong> 87.5%</p>
+        <p><strong>Generated:</strong> 2026-02-09 08:56:58</p>
+    </div>
+
+    <h2>Test Results</h2>
+    <table>
+        <tr>
+            <th>Test Name</th>
+            <th>Endpoint</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Expected</th>
+            <th>Response Time</th>
+            <th>Result</th>
+            <th>Errors</th>
+        </tr>
+
+        <tr class="passed">
+            <td>TEST-009: Health Check</td>
+            <td>/health</td>
+            <td>GET</td>
+            <td>200</td>
+            <td>200</td>
+            <td>1017.75ms</td>
+            <td>✅ PASSED</td>
+            <td></td>
+        </tr>
+
+        <tr class="failed">
+            <td>TEST-001: Inferencia PKL exitosa</td>
+            <td>/infer</td>
+            <td>POST</td>
+            <td>500</td>
+            <td>200</td>
+            <td>295.89ms</td>
+            <td>❌ FAILED</td>
+            <td></td>
+        </tr>
+
+        <tr class="passed">
+            <td>TEST-002: Extensión inválida</td>
+            <td>/infer</td>
+            <td>POST</td>
+            <td>400</td>
+            <td>400</td>
+            <td>181.48ms</td>
+            <td>✅ PASSED</td>
+            <td></td>
+        </tr>
+
+        <tr class="passed">
+            <td>TEST-003: Archivo vacío</td>
+            <td>/infer</td>
+            <td>POST</td>
+            <td>400</td>
+            <td>400</td>
+            <td>176.31ms</td>
+            <td>✅ PASSED</td>
+            <td></td>
+        </tr>
+
+        <tr class="passed">
+            <td>TEST-010: TopK inválido</td>
+            <td>/infer</td>
+            <td>POST</td>
+            <td>422</td>
+            <td>422</td>
+            <td>174.88ms</td>
+            <td>✅ PASSED</td>
+            <td></td>
+        </tr>
+
+        <tr class="passed">
+            <td>TEST-004: Batch múltiple</td>
+            <td>/infer/batch/evaluate</td>
+            <td>POST</td>
+            <td>200</td>
+            <td>200</td>
+            <td>178.64ms</td>
+            <td>✅ PASSED</td>
+            <td></td>
+        </tr>
+
+        <tr class="passed">
+            <td>TEST-006: Video inference</td>
+            <td>/api/video/infer</td>
+            <td>POST</td>
+            <td>200</td>
+            <td>200</td>
+            <td>177.31ms</td>
+            <td>✅ PASSED</td>
+            <td></td>
+        </tr>
+
+        <tr class="passed">
+            <td>TEST-007: Video extensión inválida</td>
+            <td>/api/video/infer</td>
+            <td>POST</td>
+            <td>400</td>
+            <td>400</td>
+            <td>170.46ms</td>
+            <td>✅ PASSED</td>
+            <td></td>
+        </tr>
+
+    </table>
+</body>
+</html>

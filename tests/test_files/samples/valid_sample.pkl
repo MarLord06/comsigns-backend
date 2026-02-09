@@ -1,0 +1,20 @@
+# Archivo PKL simulado para pruebas
+# NOTA: Este es solo un marcador de posición.
+# En un entorno real, este debería ser un archivo .pkl válido
+# generado por el sistema de keypoints con la estructura:
+#
+# {
+#   "hand": tensor de keypoints de mano [T, hand_dim],
+#   "body": tensor de keypoints de cuerpo [T, body_dim],
+#   "face": tensor de keypoints de cara [T, face_dim],
+#   "lengths": (opcional) longitud de secuencia
+# }
+#
+# Para pruebas reales, usar archivos PKL generados por el
+# preprocesamiento de video del sistema ComSigns.
+
+Este archivo se usa en:
+- TEST-001: Inferencia PKL exitosa
+- TEST-004: Batch inference múltiple
+- TEST-005: Batch con archivos mixtos
+- TEST-010: Validación de parámetros topk

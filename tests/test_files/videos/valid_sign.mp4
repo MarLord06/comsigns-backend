@@ -1,0 +1,13 @@
+# Archivo de video simulado para pruebas
+# NOTA: Este es solo un marcador de posición.
+# En un entorno real, este debería ser un archivo .mp4 válido
+# con las siguientes características:
+#
+# - Formato: MP4, MOV, AVI, WebM, o MKV
+# - Duración: 0.1 - 30 segundos
+# - Tamaño: < 100 MB
+# - Contenido: Seña LSP-AEC segmentada
+# - Resolución: Recomendado 640x480 o similar
+# - FPS: 24-30 fps
+#
+# Este archivo se usa en TEST-006 para inferencia de video exitosa.

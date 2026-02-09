@@ -1,0 +1,6 @@
+# Archivo de ejemplo para pruebas
+# Este es un archivo de texto que simula un archivo con extensión inválida
+# Se usa en TEST-002 y TEST-005 para verificar validación de tipos de archivo
+
+Contenido de ejemplo para testing.
+No es un archivo PKL válido.
