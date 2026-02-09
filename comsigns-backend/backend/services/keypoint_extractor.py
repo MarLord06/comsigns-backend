@@ -351,10 +351,11 @@ class KeypointExtractor:
                     1.0  # visibility = 1 when detected
                 ]
             
+            # Note: Newer MediaPipe versions return 478 landmarks (468 + 10 iris)
+            # This is expected behavior, just log at debug level
             if len(landmarks) != FACE_LANDMARKS:
-                logger.warning(
-                    f"Face landmarks count mismatch: got {len(landmarks)}, expected {FACE_LANDMARKS}. "
-                    f"Using first {num_landmarks} landmarks."
+                logger.debug(
+                    f"Face landmarks: got {len(landmarks)}, using first {num_landmarks}"
                 )
         
         # Flatten: [468, 4] -> [1872]

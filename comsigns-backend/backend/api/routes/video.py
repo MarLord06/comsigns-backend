@@ -181,13 +181,18 @@ async def infer_from_videos(
             # Preprocess video -> tensors
             logger.info(f"Processing video: {filename}")
             features = preprocessor.process_video(content)
+            logger.info(f"Keypoints extracted: hand={features['hand'].shape}, body={features['body'].shape}, face={features['face'].shape}")
             
             # Run inference
+            logger.info(f"Running inference...")
             inference_result = inference_service.infer(features, topk=topk)
+            logger.info(f"Inference complete: top1={inference_result.top1}")
             inference_dict = inference_result.to_dict()
             
             # Apply decision rules
+            logger.info(f"Applying decision rules...")
             decision_result = evaluator.process_from_inference_result(inference_dict)
+            logger.info(f"Decision result: {decision_result.get('prediction', {})}")
             
             # Extract top-1 info
             top1 = inference_dict.get("top1", {})
