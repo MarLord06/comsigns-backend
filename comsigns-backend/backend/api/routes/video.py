@@ -81,7 +81,7 @@ CLASS_MAPPING_PATH = Path(os.getenv(
 ))
 DICT_PATH = Path(os.getenv(
     "COMSIGNS_DICT",
-    BASE_DIR.parent / "data/raw/lsp_aec/dict.json"
+    BASE_DIR / "models/dict.json"
 ))
 DEVICE = os.getenv("COMSIGNS_DEVICE", "cpu")
 
