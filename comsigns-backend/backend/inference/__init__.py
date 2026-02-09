@@ -6,7 +6,14 @@ Provides model loading, inference, and prediction utilities.
 
 from .loader import InferenceLoader, ModelInfo
 from .predictor import Predictor, PredictionResult, TopKPrediction
-from .model import SignLanguageModel, ModalityBranch
+from .model import (
+    SignLanguageModel,
+    SignLanguageClassifier,
+    MultimodalEncoder,
+    HandBranch,
+    BodyBranch,
+    FaceBranch,
+)
 
 __all__ = [
     "InferenceLoader",
@@ -15,5 +22,9 @@ __all__ = [
     "PredictionResult",
     "TopKPrediction",
     "SignLanguageModel",
-    "ModalityBranch",
+    "SignLanguageClassifier",
+    "MultimodalEncoder",
+    "HandBranch",
+    "BodyBranch",
+    "FaceBranch",
 ]

@@ -116,12 +116,12 @@ class SemanticResolver:
         match = CLASS_NAME_PATTERN.match(class_name)
         
         if not match:
-            # Fallback for unexpected format
-            logger.warning(f"Unexpected class name format: {class_name}")
+            # Direct gloss names (e.g., "comer", "yo") - valid for micro vocabulary
+            # No warning needed, this is expected for simplified class mappings
             return SemanticClassInfo(
                 new_class_id=new_class_id,
                 old_class_id=None,
-                bucket="UNKNOWN",
+                bucket="DIRECT",
                 gloss=class_name,
                 is_other=False
             )

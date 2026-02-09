@@ -2,207 +2,348 @@
 Sign language recognition model architecture.
 
 Multi-branch LSTM model with hand, body, and face modalities.
+This implementation matches the training architecture exactly.
 """
 
 import torch
 import torch.nn as nn
-from typing import Dict, Optional, Tuple
+import torch.nn.functional as F
+from typing import Dict, Optional, Tuple, Literal
 
 
-class ModalityBranch(nn.Module):
-    """Branch for processing a single modality (hand, body, or face).
-    
-    Architecture:
-        Input projection → LSTM → LayerNorm
-    
-    Args:
-        input_dim: Input feature dimension
-        hidden_dim: LSTM hidden dimension
-        num_layers: Number of LSTM layers
-        dropout: Dropout probability
-        use_mlp_proj: Use MLP for input projection (for high-dim inputs like face)
-    """
-    
+class HandBranch(nn.Module):
+    """Branch for processing hand keypoints."""
+
     def __init__(
         self,
-        input_dim: int,
+        input_dim: int = 21 * 4 * 2,  # 2 hands * 21 keypoints * 4 values = 168
         hidden_dim: int = 256,
         num_layers: int = 2,
-        dropout: float = 0.3,
-        use_mlp_proj: bool = False
+        dropout: float = 0.1
     ):
         super().__init__()
-        
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+
         # Input projection
-        if use_mlp_proj:
-            # MLP projection for high-dimensional inputs (face)
-            self.input_proj = nn.Sequential(
-                nn.Linear(input_dim, hidden_dim * 2),
-                nn.ReLU(),
-                nn.Dropout(dropout),
-                nn.Linear(hidden_dim * 2, hidden_dim)
-            )
-        else:
-            # Simple linear projection
-            self.input_proj = nn.Linear(input_dim, hidden_dim)
-        
-        # LSTM
+        self.input_proj = nn.Linear(input_dim, hidden_dim)
+
+        # LSTM for temporal processing
         self.lstm = nn.LSTM(
-            input_size=hidden_dim,
-            hidden_size=hidden_dim,
+            hidden_dim,
+            hidden_dim,
             num_layers=num_layers,
-            batch_first=True,
-            dropout=dropout if num_layers > 1 else 0.0,
-            bidirectional=False
+            dropout=dropout if num_layers > 1 else 0,
+            batch_first=True
         )
-        
+
         # Layer normalization
         self.layer_norm = nn.LayerNorm(hidden_dim)
-        
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Input projection with ReLU (matches training)
+        x = self.input_proj(x)
+        x = F.relu(x)
+
+        # LSTM
+        x, _ = self.lstm(x)
+
+        # Layer normalization
+        x = self.layer_norm(x)
+
+        return x
+
+
+class BodyBranch(nn.Module):
+    """Branch for processing body/pose keypoints."""
+
+    def __init__(
+        self,
+        input_dim: int = 33 * 4,  # 33 keypoints * 4 values = 132
+        hidden_dim: int = 256,
+        num_layers: int = 2,
+        dropout: float = 0.1
+    ):
+        super().__init__()
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+
+        # Input projection
+        self.input_proj = nn.Linear(input_dim, hidden_dim)
+
+        # LSTM
+        self.lstm = nn.LSTM(
+            hidden_dim,
+            hidden_dim,
+            num_layers=num_layers,
+            dropout=dropout if num_layers > 1 else 0,
+            batch_first=True
+        )
+
+        # Layer normalization
+        self.layer_norm = nn.LayerNorm(hidden_dim)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Input projection with ReLU (matches training)
+        x = self.input_proj(x)
+        x = F.relu(x)
+        x, _ = self.lstm(x)
+        x = self.layer_norm(x)
+        return x
+
+
+class FaceBranch(nn.Module):
+    """Branch for processing face keypoints."""
+
+    def __init__(
+        self,
+        input_dim: int = 468 * 4,  # 468 keypoints * 4 values = 1872
+        hidden_dim: int = 256,
+        num_layers: int = 2,
+        dropout: float = 0.1
+    ):
+        super().__init__()
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+
+        # Dimensionality reduction (468 landmarks is a lot)
+        self.input_proj = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim * 2),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden_dim * 2, hidden_dim)
+        )
+
+        # LSTM
+        self.lstm = nn.LSTM(
+            hidden_dim,
+            hidden_dim,
+            num_layers=num_layers,
+            dropout=dropout if num_layers > 1 else 0,
+            batch_first=True
+        )
+
+        # Layer normalization
+        self.layer_norm = nn.LayerNorm(hidden_dim)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.input_proj(x)
+        x, _ = self.lstm(x)
+        x = self.layer_norm(x)
+        return x
+
+
+class MultimodalEncoder(nn.Module):
+    """
+    Multimodal encoder that combines three branches (hands, body, face).
+    
+    This matches the training architecture exactly.
+    """
+
+    def __init__(
+        self,
+        hand_input_dim: int = 21 * 4 * 2,  # 2 hands * 21 keypoints * 4 values = 168
+        body_input_dim: int = 33 * 4,       # 33 keypoints * 4 values = 132
+        face_input_dim: int = 468 * 4,      # 468 keypoints * 4 values = 1872
+        hidden_dim: int = 256,
+        output_dim: int = 512,
+        num_layers: int = 2,
+        dropout: float = 0.1
+    ):
+        super().__init__()
+        self.hidden_dim = hidden_dim
+        self.output_dim = output_dim
+
+        # Three branches
+        self.hand_branch = HandBranch(hand_input_dim, hidden_dim, num_layers, dropout)
+        self.body_branch = BodyBranch(body_input_dim, hidden_dim, num_layers, dropout)
+        self.face_branch = FaceBranch(face_input_dim, hidden_dim, num_layers, dropout)
+
+        # Fusion of embeddings
+        # Each branch produces hidden_dim, we combine all 3
+        fusion_dim = hidden_dim * 3
+        self.fusion = nn.Sequential(
+            nn.Linear(fusion_dim, output_dim),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.LayerNorm(output_dim)
+        )
+
     def forward(
         self,
-        x: torch.Tensor,
-        lengths: Optional[torch.Tensor] = None
+        hand_keypoints: torch.Tensor,
+        body_keypoints: torch.Tensor,
+        face_keypoints: torch.Tensor
     ) -> torch.Tensor:
-        """Forward pass.
-        
-        Args:
-            x: Input tensor [batch, seq_len, input_dim]
-            lengths: Sequence lengths [batch] (optional)
-        
-        Returns:
-            Output tensor [batch, hidden_dim]
         """
-        # Project input
-        x = self.input_proj(x)
-        
-        # Pack if lengths provided
-        if lengths is not None:
-            # Ensure lengths are on CPU for pack_padded_sequence
-            lengths_cpu = lengths.cpu()
-            x = nn.utils.rnn.pack_padded_sequence(
-                x, lengths_cpu, batch_first=True, enforce_sorted=False
-            )
-        
-        # LSTM forward
-        output, (h_n, c_n) = self.lstm(x)
-        
-        # Unpack if needed
-        if lengths is not None:
-            output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
-        
-        # Get last hidden state
-        # h_n: [num_layers, batch, hidden_dim]
-        last_hidden = h_n[-1]  # [batch, hidden_dim]
-        
-        # Layer normalization
-        output = self.layer_norm(last_hidden)
-        
+        Process keypoints from all three branches and fuse them.
+
+        Args:
+            hand_keypoints: Tensor (batch, seq_len, hand_input_dim)
+            body_keypoints: Tensor (batch, seq_len, body_input_dim)
+            face_keypoints: Tensor (batch, seq_len, face_input_dim)
+
+        Returns:
+            Fused tensor (batch, seq_len, output_dim)
+        """
+        # Process each branch
+        hand_emb = self.hand_branch(hand_keypoints)
+        body_emb = self.body_branch(body_keypoints)
+        face_emb = self.face_branch(face_keypoints)
+
+        # Concatenate embeddings
+        fused = torch.cat([hand_emb, body_emb, face_emb], dim=-1)
+
+        # Final projection
+        output = self.fusion(fused)
+
         return output
 
 
-class SignLanguageModel(nn.Module):
-    """Multi-branch sign language recognition model.
+class SignLanguageClassifier(nn.Module):
+    """
+    Classification model that wraps MultimodalEncoder.
     
-    Architecture:
-        - Hand branch: LSTM on hand keypoints
-        - Body branch: LSTM on body/pose keypoints  
-        - Face branch: LSTM on face keypoints
-        - Fusion: Concatenate + MLP → classifier
+    Takes multimodal keypoint sequences and produces class logits.
+    Handles temporal pooling to convert sequence embeddings [B, T, D]
+    to fixed-size representations [B, D] for classification.
     
-    Args:
-        hand_dim: Hand input dimension (default: 168 = 2 hands * 21 landmarks * 4 coords)
-        body_dim: Body input dimension (default: 132 = 33 landmarks * 4 coords)
-        face_dim: Face input dimension (default: 1872 = 468 landmarks * 4 coords)
-        hidden_dim: Hidden dimension for all branches
-        num_classes: Number of output classes
-        dropout: Dropout probability
+    This matches the training architecture exactly.
     """
     
     def __init__(
         self,
-        hand_dim: int = 168,
-        body_dim: int = 132,
-        face_dim: int = 1872,
-        hidden_dim: int = 256,
-        num_classes: int = 142,
-        dropout: float = 0.3
+        encoder: nn.Module,
+        num_classes: int,
+        pooling: Literal["mean", "max", "last"] = "mean",
+        dropout: float = 0.1
     ):
         super().__init__()
         
-        self.hidden_dim = hidden_dim
+        if num_classes <= 0:
+            raise ValueError(f"num_classes must be positive, got {num_classes}")
+        
+        self.encoder = encoder
+        self.pooling = pooling
         self.num_classes = num_classes
         
-        # Encoder branches
-        self.encoder = nn.ModuleDict({
-            'hand_branch': ModalityBranch(
-                input_dim=hand_dim,
-                hidden_dim=hidden_dim,
-                num_layers=2,
-                dropout=dropout,
-                use_mlp_proj=False
-            ),
-            'body_branch': ModalityBranch(
-                input_dim=body_dim,
-                hidden_dim=hidden_dim,
-                num_layers=2,
-                dropout=dropout,
-                use_mlp_proj=False
-            ),
-            'face_branch': ModalityBranch(
-                input_dim=face_dim,
-                hidden_dim=hidden_dim,
-                num_layers=2,
-                dropout=dropout,
-                use_mlp_proj=True  # MLP for high-dim face input
-            )
-        })
+        # Get encoder output dimension
+        encoder_dim = getattr(encoder, 'output_dim', 512)
         
-        # Fusion layer
-        fusion_input_dim = hidden_dim * 3  # 3 branches concatenated
-        self.encoder['fusion'] = nn.Sequential(
-            nn.Linear(fusion_input_dim, hidden_dim * 2),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-            nn.LayerNorm(hidden_dim * 2)
-        )
-        
-        # Classifier
-        self.classifier = nn.Linear(hidden_dim * 2, num_classes)
-        
+        self.dropout = nn.Dropout(dropout)
+        self.classifier = nn.Linear(encoder_dim, num_classes)
+    
     def forward(
         self,
         hand: torch.Tensor,
         body: torch.Tensor,
         face: torch.Tensor,
-        lengths: Optional[torch.Tensor] = None
+        lengths: Optional[torch.Tensor] = None,
+        mask: Optional[torch.Tensor] = None
     ) -> torch.Tensor:
-        """Forward pass.
+        """
+        Forward pass: keypoints → embeddings → pooled → logits.
         
         Args:
-            hand: Hand features [batch, seq_len, hand_dim]
-            body: Body features [batch, seq_len, body_dim]
-            face: Face features [batch, seq_len, face_dim]
-            lengths: Sequence lengths [batch] (optional)
+            hand: Hand keypoints [B, T, hand_dim]
+            body: Body keypoints [B, T, body_dim]
+            face: Face keypoints [B, T, face_dim]
+            lengths: Original sequence lengths [B] (for masked pooling)
+            mask: Boolean mask [B, T] where True = valid position
         
         Returns:
-            Logits [batch, num_classes]
+            Logits tensor of shape [B, num_classes]
         """
-        # Process each branch
-        hand_out = self.encoder['hand_branch'](hand, lengths)
-        body_out = self.encoder['body_branch'](body, lengths)
-        face_out = self.encoder['face_branch'](face, lengths)
+        # Encode: [B, T, D]
+        embeddings = self.encoder(hand, body, face)
         
-        # Concatenate
-        fused = torch.cat([hand_out, body_out, face_out], dim=-1)
+        # Pool: [B, T, D] → [B, D]
+        pooled = self._temporal_pool(embeddings, lengths, mask)
         
-        # Fusion MLP
-        fused = self.encoder['fusion'](fused)
-        
-        # Classify
-        logits = self.classifier(fused)
+        # Classify: [B, D] → [B, num_classes]
+        pooled = self.dropout(pooled)
+        logits = self.classifier(pooled)
         
         return logits
+    
+    def _temporal_pool(
+        self,
+        embeddings: torch.Tensor,
+        lengths: Optional[torch.Tensor],
+        mask: Optional[torch.Tensor]
+    ) -> torch.Tensor:
+        """Pool temporal dimension to get fixed-size representation."""
+        B, T, D = embeddings.shape
+        
+        if self.pooling == "mean":
+            return self._masked_mean_pool(embeddings, lengths, mask)
+        elif self.pooling == "max":
+            return self._masked_max_pool(embeddings, mask)
+        elif self.pooling == "last":
+            return self._last_valid_pool(embeddings, lengths)
+        else:
+            raise ValueError(f"Unknown pooling: {self.pooling}")
+    
+    def _masked_mean_pool(
+        self,
+        embeddings: torch.Tensor,
+        lengths: Optional[torch.Tensor],
+        mask: Optional[torch.Tensor]
+    ) -> torch.Tensor:
+        """Mean pooling that respects sequence lengths."""
+        B, T, D = embeddings.shape
+        
+        if lengths is not None:
+            # Create mask from lengths: [B, T]
+            mask = torch.arange(T, device=embeddings.device).expand(B, T) < lengths.unsqueeze(1)
+        
+        if mask is not None:
+            # Expand mask for broadcasting: [B, T, 1]
+            mask_expanded = mask.unsqueeze(-1).float()
+            
+            # Sum only valid positions
+            summed = (embeddings * mask_expanded).sum(dim=1)  # [B, D]
+            
+            # Divide by actual lengths
+            if lengths is not None:
+                counts = lengths.unsqueeze(-1).float()  # [B, 1]
+            else:
+                counts = mask_expanded.sum(dim=1)  # [B, 1]
+            
+            # Avoid division by zero
+            counts = counts.clamp(min=1.0)
+            
+            return summed / counts
+        else:
+            # No mask: simple mean
+            return embeddings.mean(dim=1)
+    
+    def _masked_max_pool(
+        self,
+        embeddings: torch.Tensor,
+        mask: Optional[torch.Tensor]
+    ) -> torch.Tensor:
+        """Max pooling that ignores padding."""
+        if mask is not None:
+            mask_expanded = mask.unsqueeze(-1)
+            embeddings = embeddings.masked_fill(~mask_expanded, float('-inf'))
+        return embeddings.max(dim=1).values
+    
+    def _last_valid_pool(
+        self,
+        embeddings: torch.Tensor,
+        lengths: Optional[torch.Tensor]
+    ) -> torch.Tensor:
+        """Get embedding at last valid timestep."""
+        B, T, D = embeddings.shape
+        
+        if lengths is not None:
+            indices = (lengths - 1).clamp(0, T - 1)
+            indices_expanded = indices.view(B, 1, 1).expand(B, 1, D)
+            pooled = embeddings.gather(1, indices_expanded).squeeze(1)
+            return pooled
+        else:
+            return embeddings[:, -1, :]
     
     def predict(
         self,
@@ -211,17 +352,11 @@ class SignLanguageModel(nn.Module):
         face: torch.Tensor,
         lengths: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Predict with probabilities.
-        
-        Args:
-            hand: Hand features
-            body: Body features
-            face: Face features
-            lengths: Sequence lengths
-        
-        Returns:
-            Tuple of (probabilities, logits)
-        """
+        """Predict with probabilities."""
         logits = self.forward(hand, body, face, lengths)
         probs = torch.softmax(logits, dim=-1)
         return probs, logits
+
+
+# Alias for backward compatibility with loader
+SignLanguageModel = SignLanguageClassifier

@@ -251,41 +251,44 @@ class KeypointExtractor:
         """Extract hand keypoints (21 per hand, max 2 hands).
         
         Returns:
-            np.ndarray of shape (168,) - [left_hand(84), right_hand(84)]
+            np.ndarray of shape (168,) - all hand landmarks flattened in detection order
+            
+        Note:
+            This matches the training extractor which iterates over detected hands
+            in order, without separating by left/right handedness.
         """
         result = self.hand_landmarker.detect(mp_image)
         
-        # Initialize with zeros (no detection)
-        keypoints = np.zeros((2, HAND_LANDMARKS, COORDS_PER_POINT), dtype=np.float32)
+        # Collect all keypoints in detection order (matches training)
+        keypoints = []
         
         if result.hand_landmarks:
-            # Determine handedness and fill appropriately
-            for i, (landmarks, handedness) in enumerate(
-                zip(result.hand_landmarks, result.handedness)
-            ):
-                if i >= 2:
-                    break
-                
-                # Get hand index (0=left, 1=right) based on handedness
-                # Note: MediaPipe reports from camera's perspective, so we flip
-                hand_label = handedness[0].category_name.lower()
-                hand_idx = 0 if hand_label == "left" else 1
-                
-                # Limit to expected number of landmarks
-                for j, landmark in enumerate(landmarks):
-                    if j >= HAND_LANDMARKS:
-                        break
-                    keypoints[hand_idx, j] = [
+            for hand_landmarks in result.hand_landmarks:
+                # MediaPipe Hands has 21 landmarks per hand
+                for landmark in hand_landmarks:
+                    keypoints.append([
                         landmark.x,
                         landmark.y,
                         landmark.z,
                         1.0  # visibility = 1 when detected
-                    ]
+                    ])
         
-        # Flatten: [2, 21, 4] -> [168]
-        result = keypoints.flatten()
-        assert result.shape == (HAND_DIM,), f"Hand keypoints shape mismatch: {result.shape}"
-        return result
+        # Convert to numpy array
+        if keypoints:
+            keypoints_array = np.array(keypoints, dtype=np.float32).flatten()
+        else:
+            keypoints_array = np.array([], dtype=np.float32)
+        
+        # Pad or truncate to expected size (168 = 2 hands * 21 landmarks * 4 coords)
+        if len(keypoints_array) < HAND_DIM:
+            # Pad with zeros
+            result_array = np.zeros(HAND_DIM, dtype=np.float32)
+            result_array[:len(keypoints_array)] = keypoints_array
+        else:
+            # Truncate to max 2 hands
+            result_array = keypoints_array[:HAND_DIM]
+        
+        return result_array
     
     def _extract_body_keypoints(self, mp_image: "mp.Image") -> np.ndarray:
         """Extract pose keypoints (33 landmarks).

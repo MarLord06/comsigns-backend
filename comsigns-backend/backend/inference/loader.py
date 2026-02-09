@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Any
 
 import torch
 
-from .model import SignLanguageModel
+from .model import SignLanguageClassifier, MultimodalEncoder, SignLanguageModel
 
 logger = logging.getLogger(__name__)
 
@@ -196,13 +196,22 @@ class InferenceLoader:
             f"face_dim={face_dim}, hidden_dim={hidden_dim}, num_classes={num_classes}"
         )
         
-        # Create model
-        self._model = SignLanguageModel(
-            hand_dim=hand_dim,
-            body_dim=body_dim,
-            face_dim=face_dim,
+        # Create encoder and classifier (matches training architecture)
+        encoder = MultimodalEncoder(
+            hand_input_dim=hand_dim,
+            body_input_dim=body_dim,
+            face_input_dim=face_dim,
             hidden_dim=hidden_dim,
-            num_classes=num_classes
+            output_dim=512,  # Default output dim
+            num_layers=2,
+            dropout=0.1
+        )
+        
+        self._model = SignLanguageClassifier(
+            encoder=encoder,
+            num_classes=num_classes,
+            pooling="mean",  # Match training
+            dropout=0.1
         )
         
         # Load state dict
