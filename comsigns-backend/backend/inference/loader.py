@@ -168,7 +168,6 @@ class InferenceLoader:
         )
         
         # Extract metadata
-        num_classes = checkpoint.get('num_classes', 142)
         epoch = checkpoint.get('epoch', 0)
         tail_to_other = checkpoint.get('tail_to_other', False)
         
@@ -179,6 +178,12 @@ class InferenceLoader:
             state_dict = checkpoint['model_state_dict']
         else:
             raise RuntimeError("Checkpoint missing model state dict")
+        
+        # Infer num_classes from classifier layer in state dict (most reliable)
+        if 'classifier.weight' in state_dict:
+            num_classes = state_dict['classifier.weight'].shape[0]
+        else:
+            num_classes = checkpoint.get('num_classes', 142)
         
         # Infer input dimensions from state dict
         hand_dim = state_dict['encoder.hand_branch.input_proj.weight'].shape[1]
