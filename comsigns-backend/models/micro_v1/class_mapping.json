@@ -1,0 +1,18 @@
+{
+  "vocab": {
+    "comer": 0,
+    "yo": 1,
+    "t\u00fa": 2,
+    "s\u00ed": 3,
+    "no": 4,
+    "dos": 5
+  },
+  "class_names": [
+    "comer",
+    "yo",
+    "t\u00fa",
+    "s\u00ed",
+    "no",
+    "dos"
+  ]
+}
