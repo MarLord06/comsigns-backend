@@ -85,49 +85,19 @@ def get_batch_service():
     """Get or create the batch inference service.
     
     Lazy loads the service on first call.
+    Uses the shared inference service from app.py.
     """
     global _batch_service
     
     if _batch_service is None:
-        import os
-        from pathlib import Path
-        
-        from backend.services.inference_service import InferenceService
+        from backend.api.app import get_service, get_decision_evaluator
         from backend.services.batch_service import BatchInferenceService
-        from backend.decision_engine import DecisionEvaluator
-        
-        # Configuration (same as main app)
-        DEFAULT_EXPERIMENT = "run_20260122_010532"
-        BASE_DIR = Path(__file__).parent.parent.parent.parent  # comsigns/
-        
-        CHECKPOINT_PATH = Path(os.getenv(
-            "COMSIGNS_CHECKPOINT",
-            BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/checkpoints/best.pt"
-        ))
-        CLASS_MAPPING_PATH = Path(os.getenv(
-            "COMSIGNS_CLASS_MAPPING",
-            BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/class_mapping.json"
-        ))
-        DICT_PATH = Path(os.getenv(
-            "COMSIGNS_DICT",
-            BASE_DIR / "models/dict.json"
-        ))
-        DEVICE = os.getenv("COMSIGNS_DEVICE", "cpu")
         
         logger.info("Initializing BatchInferenceService...")
-        logger.info(f"  Checkpoint: {CHECKPOINT_PATH}")
-        logger.info(f"  Class mapping: {CLASS_MAPPING_PATH}")
         
-        # Create dependencies
-        inference_service = InferenceService(
-            checkpoint_path=CHECKPOINT_PATH,
-            class_mapping_path=CLASS_MAPPING_PATH,
-            dict_path=DICT_PATH if DICT_PATH.exists() else None,
-            device=DEVICE,
-            lazy_load=False
-        )
-        
-        evaluator = DecisionEvaluator()
+        # Use shared services from app.py
+        inference_service = get_service()
+        evaluator = get_decision_evaluator()
         
         _batch_service = BatchInferenceService(
             inference_service=inference_service,

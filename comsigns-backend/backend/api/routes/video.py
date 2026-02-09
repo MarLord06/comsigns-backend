@@ -6,9 +6,7 @@ and sign language inference.
 """
 
 import logging
-from pathlib import Path
 from typing import List, Optional
-import os
 
 from fastapi import APIRouter, File, UploadFile, HTTPException, Query
 from pydantic import BaseModel, Field
@@ -67,55 +65,19 @@ MAX_VIDEO_SIZE_MB = 100
 MIN_DURATION_SEC = 0.1  # 100ms minimum
 MAX_DURATION_SEC = 30.0  # 30 seconds maximum
 
-# Default paths
-DEFAULT_EXPERIMENT = "run_20260122_010532"
-BASE_DIR = Path(__file__).parent.parent.parent.parent  # comsigns/
-
-CHECKPOINT_PATH = Path(os.getenv(
-    "COMSIGNS_CHECKPOINT",
-    BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/checkpoints/best.pt"
-))
-CLASS_MAPPING_PATH = Path(os.getenv(
-    "COMSIGNS_CLASS_MAPPING",
-    BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/class_mapping.json"
-))
-DICT_PATH = Path(os.getenv(
-    "COMSIGNS_DICT",
-    BASE_DIR / "models/dict.json"
-))
-DEVICE = os.getenv("COMSIGNS_DEVICE", "cpu")
-
 
 # ============================================================
 # Service Initialization
 # ============================================================
 
-_inference_service = None
 _video_preprocessor = None
 _decision_evaluator = None
 
 
 def get_inference_service():
-    """Get or create the inference service."""
-    global _inference_service
-    
-    if _inference_service is None:
-        from backend.services.inference_service import InferenceService
-        
-        logger.info(f"Initializing InferenceService for video...")
-        logger.info(f"  Checkpoint: {CHECKPOINT_PATH}")
-        logger.info(f"  Class mapping: {CLASS_MAPPING_PATH}")
-        logger.info(f"  Dict path: {DICT_PATH}")
-        
-        _inference_service = InferenceService(
-            checkpoint_path=CHECKPOINT_PATH,
-            class_mapping_path=CLASS_MAPPING_PATH,
-            dict_path=DICT_PATH,
-            device=DEVICE,
-            lazy_load=True
-        )
-    
-    return _inference_service
+    """Get the shared inference service from app.py."""
+    from backend.api.app import get_service
+    return get_service()
 
 
 def get_video_preprocessor():
