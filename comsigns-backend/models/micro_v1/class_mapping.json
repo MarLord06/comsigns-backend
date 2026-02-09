@@ -1,18 +1,57 @@
 {
-  "vocab": {
-    "comer": 0,
-    "yo": 1,
-    "t\u00fa": 2,
-    "s\u00ed": 3,
-    "no": 4,
-    "dos": 5
+  "config": {
+    "strategy": "micro_vocabulary",
+    "vocabulary_size": 6,
+    "description": "Phase 1 micro-vocabulary for demonstrating real learning"
   },
-  "class_names": [
-    "comer",
-    "yo",
-    "t\u00fa",
-    "s\u00ed",
-    "no",
-    "dos"
-  ]
+  "old_to_new": {
+    "288": 0,
+    "0": 1,
+    "96": 2,
+    "58": 3,
+    "39": 4,
+    "65": 5
+  },
+  "new_to_old": {
+    "0": [
+      288
+    ],
+    "1": [
+      0
+    ],
+    "2": [
+      96
+    ],
+    "3": [
+      58
+    ],
+    "4": [
+      39
+    ],
+    "5": [
+      65
+    ]
+  },
+  "new_class_names": {
+    "0": "comer",
+    "1": "yo",
+    "2": "tú",
+    "3": "sí",
+    "4": "no",
+    "5": "dos"
+  },
+  "statistics": {
+    "num_classes_original": 506,
+    "num_classes_remapped": 6,
+    "vocabulary": [
+      "comer",
+      "yo",
+      "tú",
+      "sí",
+      "no",
+      "dos"
+    ],
+    "train_samples": 227,
+    "val_samples": 59
+  }
 }
