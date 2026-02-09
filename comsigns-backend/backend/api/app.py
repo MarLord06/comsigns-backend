@@ -49,12 +49,12 @@ app.include_router(video_router)
 # ============================================================
 
 # Default paths - can be overridden via environment variables
-DEFAULT_EXPERIMENT = "run_20260122_010532"
+DEFAULT_EXPERIMENT = "micro_v1"
 BASE_DIR = Path(__file__).parent.parent.parent # comsigns-backend/
 
 CHECKPOINT_PATH = Path(os.getenv(
     "COMSIGNS_CHECKPOINT",
-    BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/checkpoints/best.pt"
+    BASE_DIR / f"models/{DEFAULT_EXPERIMENT}/best.pt"
 ))
 CLASS_MAPPING_PATH = Path(os.getenv(
     "COMSIGNS_CLASS_MAPPING", 
