@@ -27,8 +27,9 @@ class RuleEngine:
     Rules are applied in order:
     1. Reject if bucket == "OTHER" (when reject_other=True)
     2. Reject if confidence < threshold_by_bucket
-       - HEAD: configurable (default 0.10)
-       - MID: configurable (default 0.10)
+       - HEAD: configurable (default 0.45)
+       - MID: configurable (default 0.55)
+       - DIRECT: configurable (default 0.50)
     3. Reject if margin (top1 - top2) < margin_threshold
     4. Otherwise ACCEPT
     

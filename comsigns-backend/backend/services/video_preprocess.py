@@ -34,7 +34,7 @@ except ImportError:
 
 # Default configuration
 DEFAULT_MAX_FRAMES = 150  # Maximum frames to process
-DEFAULT_MIN_FRAMES = 5    # Minimum frames required
+DEFAULT_MIN_FRAMES = 3    # Minimum frames required
 DEFAULT_TARGET_FPS = 30   # Target FPS for sampling
 
 

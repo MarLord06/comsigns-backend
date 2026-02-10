@@ -171,18 +171,20 @@ class DecisionEngineConfig:
     Attributes:
         head_threshold: Minimum confidence for HEAD class
         mid_threshold: Minimum confidence for MID class
+        direct_threshold: Minimum confidence for DIRECT class (simplified vocabulary)
         margin_threshold: Minimum gap between top1 and top2
         reject_other: Whether to reject OTHER class
     
     Note:
         Current thresholds are set LOW for debugging/testing
         with a model that has ~20% accuracy. For production,
-        consider: HEAD=0.45, MID=0.55, margin=0.10
+        consider: HEAD=0.45, MID=0.55, DIRECT=0.50, margin=0.10
     """
     # DEBUG: Low thresholds for testing with ~20% accuracy model
-    head_threshold: float = 0.45   # Accept HEAD if confidence >= 5%
-    mid_threshold: float = 0.55     # Accept MID if confidence >= 5%
-    margin_threshold: float = 0.10  # Accept if top1-top2 >= 2%
+    head_threshold: float = 0.45   # Accept HEAD if confidence >= 45%
+    mid_threshold: float = 0.55     # Accept MID if confidence >= 55%
+    direct_threshold: float = 0.50  # Accept DIRECT if confidence >= 50%
+    margin_threshold: float = 0.10  # Accept if top1-top2 >= 10%
     reject_other: bool = True      # Don't auto-reject OTHER class
     
     def get_threshold(self, bucket: str) -> float:
@@ -191,6 +193,8 @@ class DecisionEngineConfig:
             return self.head_threshold
         elif bucket == "MID":
             return self.mid_threshold
+        elif bucket == "DIRECT":
+            return self.direct_threshold
         else:
             return 1.0  # OTHER always rejected by threshold
     
@@ -199,6 +203,7 @@ class DecisionEngineConfig:
         return {
             "head_threshold": self.head_threshold,
             "mid_threshold": self.mid_threshold,
+            "direct_threshold": self.direct_threshold,
             "margin_threshold": self.margin_threshold,
             "reject_other": self.reject_other
         }

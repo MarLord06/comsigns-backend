@@ -89,7 +89,7 @@ def get_video_preprocessor():
         from backend.services.video_preprocess import VideoPreprocessor
         _video_preprocessor = VideoPreprocessor(
             max_frames=150,
-            min_frames=5
+            min_frames=3
         )
     
     return _video_preprocessor
@@ -293,6 +293,6 @@ async def get_video_config():
         "min_duration_sec": MIN_DURATION_SEC,
         "max_duration_sec": MAX_DURATION_SEC,
         "max_frames": 150,
-        "min_frames": 5,
+        "min_frames": 3,
         "target_fps": 30
     }
