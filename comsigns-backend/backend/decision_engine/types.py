@@ -183,7 +183,7 @@ class DecisionEngineConfig:
     # DEBUG: Low thresholds for testing with ~20% accuracy model
     head_threshold: float = 0.45   # Accept HEAD if confidence >= 45%
     mid_threshold: float = 0.55     # Accept MID if confidence >= 55%
-    direct_threshold: float = 0.50  # Accept DIRECT if confidence >= 50%
+    direct_threshold: float = 0.60  # Accept DIRECT if confidence >= 50%
     margin_threshold: float = 0.10  # Accept if top1-top2 >= 10%
     reject_other: bool = True      # Don't auto-reject OTHER class
     
